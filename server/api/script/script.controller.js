@@ -4,7 +4,7 @@ var _ = require('lodash');
 var Script = require('./script.model');
 var SSH = require('simple-ssh');
 
-function getDiskUsage(server, user, script) {
+function runScriptOnServer(server, user, script) {
   var ssh = new SSH({
     host: server,
     user: user
@@ -17,11 +17,38 @@ function getDiskUsage(server, user, script) {
   }).start();
 }
 
+function createBaseScripts(res) {
+  Script.create({
+    name: 'Disk Space',
+    command: 'df -h',
+    defaultInterval: 60 * 1000
+  },{
+    name: 'CPU Load',
+    command: 'top -n 1',
+    defaultInterval: 60 * 1000
+  },{
+    name: 'RAM Usage',
+    command: 'free',
+    defaultInterval: 60 * 1000
+  }, function(err, script) {
+    if(err) { return handleError(res, err); }
+    Script.find(function (err, scripts) {
+      if(err) { return handleError(res, err); }
+      return res.json(201, scripts);
+    });
+  });
+}
+
 // Get list of scripts
 exports.index = function(req, res) {
   Script.find(function (err, scripts) {
     if(err) { return handleError(res, err); }
-    return res.json(200, scripts);
+    if (scripts.length < 1) {
+      createBaseScripts(res);
+    }
+    else {
+      return res.json(200, scripts);
+    }
   });
 };
 
@@ -69,5 +96,6 @@ exports.destroy = function(req, res) {
 };
 
 function handleError(res, err) {
+  console.error(err);
   return res.send(500, err);
 }

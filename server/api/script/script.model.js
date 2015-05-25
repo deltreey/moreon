@@ -5,8 +5,8 @@ var mongoose = require('mongoose'),
 
 var ScriptSchema = new Schema({
   name: String,
-  info: String,
-  active: Boolean
+  command: String,
+  defaultInterval: Number
 });
 
 module.exports = mongoose.model('Script', ScriptSchema);

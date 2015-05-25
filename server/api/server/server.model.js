@@ -1,12 +1,15 @@
 'use strict';
 
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+    Schema = mongoose.Schema,
+    ScriptSchema = require('../script/script.model');
 
 var ServerSchema = new Schema({
-  name: String,
-  info: String,
-  active: Boolean
+  hostname: String,
+  description: String,
+  username: String,
+  activeScripts: [ScriptSchema],
+  durations: [Number]
 });
 
 module.exports = mongoose.model('Server', ServerSchema);

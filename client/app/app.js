@@ -12,6 +12,7 @@ angular.module('moreOnApp', [
       .otherwise({
         redirectTo: '/'
       });
+    $routeProvider.caseInsensitiveMatch = true;
 
     $locationProvider.html5Mode(true);
     $httpProvider.interceptors.push('authInterceptor');

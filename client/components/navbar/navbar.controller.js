@@ -3,8 +3,14 @@
 angular.module('moreOnApp')
   .controller('NavbarCtrl', function ($scope, $location, Auth) {
     $scope.menu = [{
-      'title': 'Home',
+      'title': 'ServerStats',
       'link': '/'
+    },{
+      'title': 'Scripts',
+      'link': '/script'
+    },{
+      'title': 'Servers',
+      'link': '/server'
     }];
 
     $scope.isCollapsed = true;
