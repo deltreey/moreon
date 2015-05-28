@@ -1,11 +1,18 @@
 'use strict';
 
 angular.module('moreOnApp')
-  .controller('ServersCtrl', function ($scope, $http) {
-    $http.get('/api/v1/servers')
-	    .success(function (data) {
-	    	$scope.servers = data;
-	    });
+  .controller('ServersCtrl', function ($scope, $http, $window) {
+  	$scope.servers = [];
+  	$scope.alerts = [];
+
+  	function GetServers() {
+  		$http.get('/api/v1/servers')
+		    .success(function (data) {
+		    	$scope.servers = data;
+		    });
+  	}
+
+  	new GetServers();
 
 	  $scope.new = function () {
 	   	$http.post('/api/v1/servers', {
@@ -13,9 +20,26 @@ angular.module('moreOnApp')
 	   		description: 'Human readable description',
 	   		username: 'administrator',
 	   		activeScripts: [],
-	   		durations: []
+	   		intervals: []
 	   	}).success(function (data) {
-	   			// TODO: redirect to server
+	   			$window.location.href = '/server/' + data._id;
 	   		});
+	  };
+
+	  $scope.delete = function (server) {
+	  	$http.delete('/api/v1/servers/' + server._id)
+	  		.success(function () {
+	  			new GetServers();
+	  			$scope.alerts.push({
+	  				type: 'success',
+	  				message: server.hostname + ' deleted!',
+	  				undo: function () {
+	  					$http.post('/api/v1/servers', server)
+	  						.success(function () {
+					   			new GetServers();
+					   		});
+	  				}
+	  			});
+	  		});
 	  };
   });

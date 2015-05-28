@@ -41,6 +41,8 @@ var all = {
     }
   },
 
+  sshkey: process.env.SSH_KEY,
+
   google: {
     clientID:     process.env.GOOGLE_ID || 'id',
     clientSecret: process.env.GOOGLE_SECRET || 'secret',

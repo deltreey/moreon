@@ -5,10 +5,12 @@ angular.module('moreOnApp')
     $routeProvider
       .when('/server', {
         templateUrl: 'app/server/servers.html',
-        controller: 'ServersCtrl'
-      })
+        controller: 'ServersCtrl',
+        authenticate: true
+      })  
       .when('/server/:id', {
         templateUrl: 'app/server/server.html',
-        controller: 'ServerCtrl'
+        controller: 'ServerCtrl',
+        authenticate: true
       });
   });

@@ -7,7 +7,7 @@ angular.module('moreOnApp')
       'link': '/'
     },{
       'title': 'Scripts',
-      'link': '/script'
+      'link': '/scripts'
     },{
       'title': 'Servers',
       'link': '/server'

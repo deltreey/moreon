@@ -12,6 +12,10 @@ module.exports = {
   GOOGLE_ID:        'app-id',
   GOOGLE_SECRET:    'secret',
 
+  SSH_KEY: '-----BEGIN RSA PRIVATE KEY-----\n' +
+          // ...
+          '-----END RSA PRIVATE KEY-----',
+
   // Control debug level for modules using visionmedia/debug
   DEBUG: ''
 };

@@ -2,33 +2,19 @@
 
 var _ = require('lodash');
 var Script = require('./script.model');
-var SSH = require('simple-ssh');
-
-function runScriptOnServer(server, user, script) {
-  var ssh = new SSH({
-    host: server,
-    user: user
-  });
-
-  ssh.exec(script, {
-    out: function(stdout) {
-        return stdout;
-    }
-  }).start();
-}
 
 function createBaseScripts(res) {
   Script.create({
     name: 'Disk Space',
-    command: 'df -h',
+    command: 'df -lh | awk \'FNR == 2 {print substr($5, 1, length($5)-1)}\'',
     defaultInterval: 60 * 1000
   },{
     name: 'CPU Load',
-    command: 'top -n 1',
+    command: 'ps aux | awk {\'sum+=$3;print sum\'} | tail -n 1',
     defaultInterval: 60 * 1000
   },{
     name: 'RAM Usage',
-    command: 'free',
+    command: 'free | awk \'FNR == 2 {print ($3 / ($3 + $4)) * 100}\'',
     defaultInterval: 60 * 1000
   }, function(err, script) {
     if(err) { return handleError(res, err); }

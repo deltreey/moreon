@@ -1,3 +1,60 @@
-<div class="col-md-12">
-This is the server view.
+<div class="input-group">
+	<label for="name" class="input-group-addon">Hostname or IP</label>
+	<input type="text" name="name" class="form-control" ng-model="server.hostname" />
 </div>
+<div class="input-group">
+	<label for="desc" class="input-group-addon">Description</label>
+	<input type="text" name="desc" class="form-control" ng-model="server.description" />
+</div>
+<div class="input-group">
+	<label for="user" class="input-group-addon">Username</label>
+	<input type="text" name="user" class="form-control" ng-model="server.username" />
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<table class="table table-striped">
+			<thead>
+				<th>All Scripts</th>
+				<th>Default Interval</th>
+				<th>Add</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="script in scripts">
+					<td ng-bind="script.name"></td>
+					<td ng-bind="script.defaultInterval"></td>
+					<td>
+						<button type="button" class="btn btn-success" ng-click="addScript(script)">+</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="col-md-6">
+		<table class="table table-striped">
+			<thead>
+				<th>Active Scripts</th>
+				<th>Set Interval</th>
+				<th>Remove</th>
+			</thead>
+			<tbody>
+				<tr ng-repeat="script in server.activeScripts track by $index">
+					<td ng-bind="script.script.name"></td>
+					<td>
+						<input type="number" ng-model="script.duration" class="form-control" />
+					</td>
+					<td>
+						<button type="button" class="btn btn-danger" ng-click="server.activeScripts.splice($index, 1);">-</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div style="text-align: right;">
+	<button type="button" ng-click="update()" class="btn btn-primary">Update Server</button>
+	<button type="button" ng-click="delete()" class="btn btn-danger">Delete Server</button>
+</div>
+<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="alerts.splice($index, 1);">
+	{{alert.message}}
+	<a ng-if="alert.undo" ng-click="alert.undo();alerts.splice($index, 1);" class="btn btn-warning">Undo</a>
+</alert>
