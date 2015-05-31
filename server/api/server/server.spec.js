@@ -5,9 +5,13 @@ var app = require('../../app');
 var request = require('supertest');
 var mongoose = require('mongoose');
 var async = require('async');
+var config = require('../../config/environment');
+var jwt = require('jsonwebtoken');
+var server = request.agent("http://localhost:9000");
 
 var Server = require('./server.model'),
-    Script = require('../script/script.model');
+    Script = require('../script/script.model'),
+    User = require('../user/user.model');
 
 describe('GET /api/v1/servers', function() {
 
@@ -25,36 +29,56 @@ describe('GET /api/v1/servers', function() {
 });
 
 describe('Integration Tests', function() {
-  var serverId = null;
-  var scriptId = null;
+  var token = null;
+  var testServer = {
+    hostname: 'test',
+    description: 'test',
+    username: 'test'
+  };
+  var testScript = {
+    name: 'test',
+    command: 'echo "test"',
+    defaultInterval: 1000
+  };
+  var testUser = {
+    provider: 'local',
+    name: 'Test User',
+    email: 'testUser@test.com',
+    password: 'testUser'
+  };
 
   beforeEach(function (done) {
     async.waterfall([
       function (callback) {
-        Script.create({
-          name: 'test',
-          command: 'echo "test"',
-          defaultInterval: 1000
-        }, function (error, script){
+        User.create(testUser, function (error, user) {
           if (error) { return callback(error); }
-          scriptId = script._id;
-          callback(null, script);
+          testUser = user.toObject();
+          callback();
         });
       },
-      function (script, callback) {
-        Server.create({
-          hostname: 'test',
-          description: 'test',
-          username: 'test',
-          activeScripts: [{
-            script: script._id,
-            duration: 100
-          }]
-        }, function (err, server) {
-          if (err) return callback(err);
-          serverId = server._id;
-          callback(null, server);
+      function (callback) {
+        Script.create(testScript, function (error, script) {
+          if (error) { return callback(error); }
+          testScript = script.toObject();
+          callback();
         });
+      },
+      function (callback) {
+        testServer.activeScripts = [{
+          script: testScript._id,
+          duration: 100
+        }];
+
+        Server.create(testServer, function (err, server) {
+          if (err) return callback(err);
+          testServer = server.toObject();
+          callback();
+        });
+      },
+      function (callback) {
+        // authenticate user
+        token = jwt.sign({ _id: testUser._id }, config.secrets.session, { expiresInMinutes: 1 });
+        callback();
       }], function (error, results) {
         done(error);
       });
@@ -63,13 +87,19 @@ describe('Integration Tests', function() {
   afterEach(function (done) {
     async.waterfall([
     function (callback) {
-      Server.remove({ _id: serverId },
+      Server.remove({ _id: testServer._id },
         function (err) {
           callback(err)
         });
     },
     function (callback) {
-      Script.remove({ _id: scriptId },
+      Script.remove({ _id: testScript._id },
+        function (err) {
+          callback(err)
+        });
+    },
+    function (callback) {
+      User.remove({ _id: testUser._id },
         function (err) {
           callback(err)
         });
@@ -84,15 +114,17 @@ describe('Integration Tests', function() {
         function (callback) {
           request(app)
             .get('/api/v1/servers/start')
+            .set('Authorization', 'Bearer ' + token)
             .expect(200)
-            .end(function (err) {
+            .end(function (err, res) {
               if (err) { return callback(err); }
               callback();
             });
         },
         function (callback) {
           request(app)
-            .delete('/api/v1/servers/' + serverId)
+            .delete('/api/v1/servers/' + testServer._id)
+            .set('Authorization', 'Bearer ' + token)
             .expect(204)
             .end(function (err) {
               if (err) return callback(err);
@@ -104,20 +136,22 @@ describe('Integration Tests', function() {
     });
   });
   describe('UPDATE /api/v1/servers/:id', function() {
-    it('should stop running jobs', function(done) {
+    it('should stop running jobs when they\'re deleted', function(done) {
       async.waterfall([
         function (callback) {
           request(app)
             .get('/api/v1/servers/start')
+            .set('Authorization', 'Bearer ' + token)
             .expect(200)
-            .end(function (err) {
+            .end(function (err, res) {
               if (err) { return callback(err); }
               callback();
             });
         },
         function (callback) {
           request(app)
-            .put('/api/v1/servers/' + serverId)
+            .put('/api/v1/servers/' + testServer._id)
+            .set('Authorization', 'Bearer ' + token)
             .send({ activeScripts: [] })
             .expect(200)
             .end(function (err) {
