@@ -19,6 +19,7 @@ module.exports = function(config) {
       'client/bower_components/angular-sanitize/angular-sanitize.js',
       'client/bower_components/angular-route/angular-route.js',
       'client/bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+      'client/bower_components/angular-google-chart/ng-google-chart.js',
       'client/bower_components/lodash/dist/lodash.compat.js',
       'client/app/app.js',
       'client/app/app.coffee',

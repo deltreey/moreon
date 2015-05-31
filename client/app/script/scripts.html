@@ -1,23 +1,5 @@
 <div class="row">
-	<div class="col-md-6" ng-repeat="script in scripts" ng-if="$even" style="margin-bottom: 2%;">
-		<div class="input-group">
-				<label for="name" class="input-group-addon">Name</label>
-				<input type="text" name="name" ng-model="script.name" class="form-control" />
-		</div>
-		<div class="input-group">
-				<label for="command" class="input-group-addon">Command</label>
-				<input type="text" name="command" ng-model="script.command" class="form-control" />
-		</div>
-		<div class="input-group">
-				<label for="defaultInterval" class="input-group-addon">Default Interval (in milliseconds)</label>
-				<input type="number" name="defaultInterval" ng-model="script.defaultInterval" class="form-control" />
-		</div>
-		<div style="text-align: right;">
-			<button type="button" class="btn btn-primary" ng-click="update(script)">Update</button>
-			<button type="button" class="btn btn-danger" ng-click="delete(script)">Delete</button>
-		</div>
-	</div>
-	<div class="col-md-6" ng-repeat="script in scripts" ng-if="$odd" style="margin-bottom: 2%;">
+	<div class="col-md-6" ng-repeat="script in scripts" style="margin-bottom: 2%;">
 		<div class="input-group">
 				<label for="name" class="input-group-addon">Name</label>
 				<input type="text" name="name" ng-model="script.name" class="form-control" />

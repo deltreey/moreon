@@ -52,9 +52,11 @@ exports.execute = function (req, res) {
 
 // Get list of servers
 exports.index = function(req, res) {
-  Server.find(function (err, servers) {
-    if(err) { return handleError(res, err); }
-    return res.json(200, servers);
+  Server.find()
+    .populate('activeScripts.script')
+    .exec(function (err, servers) {
+      if(err) { return handleError(res, err); }
+      return res.json(200, servers);
   });
 };
 
