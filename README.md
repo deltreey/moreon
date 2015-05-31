@@ -35,11 +35,21 @@ npm install --production
 npm start --production
 ```
 
+## There are already lots of MoreOns
+
+Yes, there are other tools for monitoring, but I wanted something that
+
+* I didn't have to install on every server, taking up resources
+* Was super lightweight, using almost no resources itself
+* Could run on a [Raspberry Pi][5]
+
+MoreOn does all of that and more, so I just had to share it with the world.  I have it running internally on a Raspberry Pi monitoring servers on my network, so I know it works.  Let's see how you use it!
+
 ## Want to contribute and help this MoreOn?
 
 This tool is generated using [yeoman][2] with the [generator-angular-fullstack][3].  That means that building and testing is easy.  Make sure you have MongoDB running and nodejs installed, and then:
 ```bash
-git clone <project>
+git clone https://github.com/deltreey/moreon.git
 npm install
 # npm install -g bower # if you don't have it
 bower install # only needed when pulling
@@ -53,3 +63,4 @@ Then just let the server sit there while you change files, updating automaticall
 [2]: http://yeoman.io/
 [3]: https://github.com/DaftMonk/generator-angular-fullstack
 [4]: http://bouil.github.io/angular-google-chart/#/fat
+[5]: https://www.raspberrypi.org/
