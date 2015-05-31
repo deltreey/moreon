@@ -102,14 +102,14 @@ exports.update = function(req, res) {
       });
     }, function (oldServer, server, callback) {
       // update server with new info; remove old intervals
-      var oldIds = _.difference(oldServer, server);
+      var oldIds = _.difference(oldServer.activeScripts, server.activeScripts);
       Server.update({ _id: oldServer._id },
         { 
           hostname: server.hostname || oldServer.hostname,
           description: server.description || oldServer.description,
-          username: server.username || oldServer.username
+          username: server.username || oldServer.username,
+          $pullAll: { activeScripts: oldIds }
         },
-        { $pullAll: { activeScripts: oldIds } },
         function (err) {
           callback(err, oldServer, server);
       });
