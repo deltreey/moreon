@@ -77,6 +77,9 @@ angular.module('moreOnApp')
               });
 
               ++colorIndex;
+              if (colorIndex >= colorList.length) {
+                colorIndex = 0;
+              }
             }
           }
         });

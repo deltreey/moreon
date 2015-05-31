@@ -1,14 +1,22 @@
 <div class="row">
-	<div class="col-md-6" ng-repeat="server in servers" style="margin-bottom: 2%;">
-		<div class="input-group">
-				<label for="name" class="input-group-addon">Hostname or IP</label>
-				<span name="name" ng-bind="server.hostname" class="form-control"></span>
+	<div class="col-md-3" ng-repeat="server in servers" style="margin-bottom: 2%;">
+		<div class="panel panel-success" ng-if="server.activeScripts.length > 0">
+			<div class="panel-heading">
+				<span name="name" ng-bind="server.description" class="panel-title"></span>
+			</div>
+			<div class="panel-body" style="text-align: right;">
+				<a class="btn btn-primary" href="/server/{{ server._id }}">Update</a>
+				<button type="button" class="btn btn-danger" ng-click="delete(server)">Delete</button>
+			</div>
 		</div>
-		<div style="text-align: right;">
-			<span class="bg-warning" style="color: red; padding: 10px;" ng-if="server.activeScripts.length < 1">Inactive</span>
-			<span class="bg-success" style="color: green; padding: 10px;" ng-if="server.activeScripts.length > 0">Active</span>
-			<a class="btn btn-primary" href="/server/{{ server._id }}">Update</a>
-			<button type="button" class="btn btn-danger" ng-click="delete(server)">Delete</button>
+		<div class="panel panel-danger" ng-if="server.activeScripts.length < 1">
+			<div class="panel-heading">
+				<span name="name" ng-bind="server.description" class="panel-title"></span>
+			</div>
+			<div class="panel-body" style="text-align: right;">
+				<a class="btn btn-primary" href="/server/{{ server._id }}">Update</a>
+				<button type="button" class="btn btn-danger" ng-click="delete(server)">Delete</button>
+			</div>
 		</div>
 	</div>
 </div>
