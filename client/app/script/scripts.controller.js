@@ -27,7 +27,10 @@ angular.module('moreOnApp')
 		$scope.update = function (script) {
 	  	$http.put('/api/v1/scripts/' + script._id, script)
 	  		.success(function () {
-	  			// TODO: notify user
+	  			$scope.alerts.push({
+	  				type: 'success',
+	  				message: 'Update Successful!'
+	  			});
 	  		});
 	  };
 
