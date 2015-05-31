@@ -30,7 +30,7 @@ This is not only a great tool for monitoring, but also for running regular jobs.
 If you are coding locally and want to deploy it, try `grunt build` and just copy the contents of the `dist/` directory to where you want to deploy.  To run the server with a minimal install on `localhost:8080`
 
 ```bash
-cat ~/.ssh/id_rsa | export SSH_KEY=$1 # local private ssh key
+export SSH_KEY="$(cat /home/administrator/.ssh/id_rsa)"
 npm install --production
 npm start --production
 ```
