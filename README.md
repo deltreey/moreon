@@ -1,11 +1,11 @@
-# More On
+# MoreOn
 
-* More On your data
-* More On your server load
-* More On your disk space
-* More On your RAM
-* More On your CPU Usage
-* More On your Bandwidth
+* MoreOn your data
+* MoreOn your server load
+* MoreOn your disk space
+* MoreOn your RAM
+* MoreOn your CPU Usage
+* MoreOn your Bandwidth
 
 ## Just do it Moron!
 
@@ -21,7 +21,7 @@ The default scripts are:
 
 The commands used and duration between checks are completely configurable to further allow you to tweak that delicate balance between the information you want and the server resources you need.  You can even add your own scripts to run regularly and see further information about your data.
 
-## Display it proudly!
+## Display your MoreOn proudly!
 
 The data is displayed in chats using the angular directive for [google-charts][4].  You can display any data from scripts in graph form, as long as it returns a number.  For this reason, you may want to do a bit of parsing with `grep` or `awk` or the like.  If you keep the system running, then the historical data will create beautiful line graphs.
 
@@ -35,7 +35,7 @@ npm install --production
 npm start --production
 ```
 
-## Want to contribute?
+## Want to contribute and help this MoreOn?
 
 This tool is generated using [yeoman][2] with the [generator-angular-fullstack][3].  That means that building and testing is easy.  Make sure you have MongoDB running and nodejs installed, and then:
 ```bash
