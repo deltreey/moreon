@@ -7,7 +7,7 @@
 * MoreOn your CPU Usage
 * MoreOn your Bandwidth
 
-## Just do it Moron!
+## Just do it MoreOn!
 
 With this tool you can easily add monitoring to any server in your network with SSH enabled.  You can run it locally, or host it on a server and gather historical data over time.
 
