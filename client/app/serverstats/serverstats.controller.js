@@ -27,7 +27,7 @@ angular.module('moreOnApp')
     ];
 
     function GetServers() {
-      $http.get('/api/v1/servers')
+      $http.get('/api/v1/servers/charts')
         .success(function (servers) {
           $scope.charts = [];
           var colorIndex = 0;

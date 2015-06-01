@@ -7,6 +7,7 @@ var auth = require('../../auth/auth.service');
 var router = express.Router();
 
 router.get('/', controller.index);
+router.get('/charts', controller.display);
 router.get('/start', auth.isAuthenticated(), controller.start);
 router.get('/execute/:serverId/:intervalId', auth.isAuthenticated(), controller.execute);
 router.get('/:id', controller.show);

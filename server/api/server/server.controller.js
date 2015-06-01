@@ -53,11 +53,21 @@ exports.execute = function (req, res) {
 // Get list of servers
 exports.index = function(req, res) {
   Server.find()
-    .populate('activeScripts.script')
     .exec(function (err, servers) {
       if(err) { return handleError(res, err); }
       return res.json(200, servers);
   });
+};
+
+exports.display = function (req, res) {
+  Server.find()
+    .populate('activeScripts.script')
+    .sort({'activeScripts.results.timestamp': -1})
+    .limit(10)
+    .exec(function (err, servers) {
+      if (err) { return handleError(res, err); }
+      return res.json(200, servers);
+    });
 };
 
 // Get a single server
