@@ -6,7 +6,7 @@ var Script = require('./script.model');
 function createBaseScripts(res) {
   Script.create({
     name: 'Disk Space',
-    command: 'df -lh | grep rootfs | awk \'{print substr($5, 1, length($5)-1)}\'',
+    command: 'df -lh | awk \'FNR == 2 {print substr($5, 1, length($5)-1)}\'',
     defaultInterval: 60 * 1000
   },{
     name: 'CPU Load',
