@@ -45,7 +45,7 @@ Yes, there are other tools for monitoring, but I wanted something that
 
 MoreOn does all of that and more, so I just had to share it with the world.  I have it running internally on a Raspberry Pi monitoring servers on my network, so I know it works.  Let's see how you use it!
 
-## So how does a MoreOn look?
+## So what does a MoreOn look like?
 
 On a normal screen, it spreads out to display lots of data at once.
 
