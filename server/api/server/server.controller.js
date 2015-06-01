@@ -178,8 +178,8 @@ function RunScript (hostname, username, command, callback) {
   var ssh = new SSH({
     host: hostname,
     user: username,
-    key: config.sshkey,
-    timeout: 2000
+    key: config.sshkey
+    //timeout: 2000
   });
 
   ssh.exec(command, {
