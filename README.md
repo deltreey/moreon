@@ -45,6 +45,15 @@ Yes, there are other tools for monitoring, but I wanted something that
 
 MoreOn does all of that and more, so I just had to share it with the world.  I have it running internally on a Raspberry Pi monitoring servers on my network, so I know it works.  Let's see how you use it!
 
+## So how does this MoreOn look?
+
+On a normal screen, it spreads out to display lots of data at once.
+![moreon on wide screen](https://goo.gl/photos/V8sHUtpfKRFB8Hh1A)
+But thanks to bootstrap, it scales well and looks good on lots of screen sizes.
+![moreon on medium screen](https://goo.gl/photos/H4JqMQP4L1ZSBhMm8)
+![moreon on small screen](https://goo.gl/photos/Ze595CJAMVScbrS37)
+![moreon on tiny screen](https://goo.gl/photos/LtBLMYwLpjrnc7cs9)
+
 ## Want to contribute and help this MoreOn?
 
 This tool is generated using [yeoman][2] with the [generator-angular-fullstack][3].  That means that building and testing is easy.  Make sure you have MongoDB running and nodejs installed, and then:
