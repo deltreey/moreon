@@ -48,11 +48,16 @@ MoreOn does all of that and more, so I just had to share it with the world.  I h
 ## So how does this MoreOn look?
 
 On a normal screen, it spreads out to display lots of data at once.
-![moreon on wide screen](https://goo.gl/photos/V8sHUtpfKRFB8Hh1A)
+
+![moreon on wide screen](https://lh3.googleusercontent.com/Ji-wBp2z3xVwJhVh9HjWmxl-GRxcnQezhYxQ5LSwxbM=w1914-h768-no)
+
 But thanks to bootstrap, it scales well and looks good on lots of screen sizes.
-![moreon on medium screen](https://goo.gl/photos/H4JqMQP4L1ZSBhMm8)
-![moreon on small screen](https://goo.gl/photos/Ze595CJAMVScbrS37)
-![moreon on tiny screen](https://goo.gl/photos/LtBLMYwLpjrnc7cs9)
+
+![moreon on medium screen](https://lh3.googleusercontent.com/p0KXY5ciGISQOt4AXRKVnjnVUZBYneWIENigK17sjKg=w1172-h845-no)
+
+![moreon on small screen](https://lh3.googleusercontent.com/BOEhEvHKp1KXg4adGqa4jru3Jrtzgi7nd9v445KmFFg=s842-no)
+
+![moreon on tiny screen](https://lh3.googleusercontent.com/ToWwtCczU-cDENdC9EFs1iKXZH403oxPXczVCanfzYM=w301-h716-no)
 
 ## Want to contribute and help this MoreOn?
 
