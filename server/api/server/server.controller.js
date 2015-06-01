@@ -121,8 +121,10 @@ exports.update = function(req, res) {
           callback(err, oldServer);
       });
     }, function (oldServer, callback) {
-      Server.findById(oldServer._id, function (err, server) {
-        callback(err, server);
+      Server.findById(oldServer._id)
+        .populate('activeScripts.script')
+        .exec(function (err, server) {
+          callback(err, server);
       });
     }, function (updated, callback) {
       // start new scripts
