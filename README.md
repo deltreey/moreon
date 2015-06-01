@@ -15,9 +15,9 @@ It uses node.js, so it's extremely light weight, storing it's data in MongoDB.  
 
 The default scripts are:
 
-* Disk usage is found via `df -lh | awk 'FNR == 2 {print substr($5, 1, length($5)-1)}'`
-* RAM usage is found via `free | awk 'FNR == 2 {print ($3 / ($3 + $4)) * 100}'`
-* CPU usage is found via `ps aux | awk {'sum+=$3;print sum'} | tail -n 1`
+* Disk usage is found via `df -lh | grep rootfs | awk '{print substr(\$5, 1, length(\$5)-1)}'`
+* RAM usage is found via `free | grep Mem | awk '{print (\$3 / (\$3 + \$4)) * 100}'`
+* CPU usage is found via `ps aux | awk {'sum+=\$3;print sum'} | tail -n 1`
 
 The commands used and duration between checks are completely configurable to further allow you to tweak that delicate balance between the information you want and the server resources you need.  You can even add your own scripts to run regularly and see further information about your data.
 

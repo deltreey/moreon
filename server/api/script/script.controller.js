@@ -6,15 +6,15 @@ var Script = require('./script.model');
 function createBaseScripts(res) {
   Script.create({
     name: 'Disk Space',
-    command: 'df -lh | awk \'FNR == 2 {print substr($5, 1, length($5)-1)}\'',
+    command: 'df -lh | grep rootfs | awk \'{print substr(\\$5, 1, length(\\$5)-1)}\'',
     defaultInterval: 60 * 1000
   },{
     name: 'CPU Load',
-    command: 'ps aux | awk {\'sum+=$3;print sum\'} | tail -n 1',
+    command: 'ps aux | awk {\'sum+=\\$3;print sum\'} | tail -n 1',
     defaultInterval: 60 * 1000
   },{
     name: 'RAM Usage',
-    command: 'free | awk \'FNR == 2 {print ($3 / ($3 + $4)) * 100}\'',
+    command: 'free | grep Mem | awk \'{print (\\$3 / (\\$3 + \\$4)) * 100}\'',
     defaultInterval: 60 * 1000
   }, function(err, script) {
     if(err) { return handleError(res, err); }
