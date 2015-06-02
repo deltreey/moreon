@@ -1,3 +1,4 @@
+![travis ci](https://travis-ci.org/deltreey/moreon.svg)
 # MoreOn
 
 * MoreOn your data
