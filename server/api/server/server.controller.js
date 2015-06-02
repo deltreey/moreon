@@ -62,11 +62,22 @@ exports.index = function(req, res) {
 exports.display = function (req, res) {
   Server.find()
     .populate('activeScripts.script')
-    .sort({'activeScripts.results.timestamp': -1})
-    .limit(10)
     .exec(function (err, servers) {
       if (err) { return handleError(res, err); }
-      return res.json(200, servers);
+      var displayServers = _.map(servers, function (server) {
+        if (server.activeScripts.length <= 0) {
+          return false;
+        }
+        server.activeScripts.sort(function (a, b) {
+          return b.timestamp - a.timestamp
+        });
+        server.activeScripts = server.activeScripts.slice(0, 10);
+        return server;
+      });
+      _.remove(displayServers, function (server) {
+        return server === false;
+      });
+      return res.json(200, displayServers);
     });
 };
 
