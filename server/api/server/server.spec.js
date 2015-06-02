@@ -29,7 +29,7 @@ describe('GET /api/v1/servers', function() {
 });
 
 describe('Integration Tests', function() {
-  this.timeout(30000);
+  this.timeout(0);
   
   var token = null;
   var testServer = {
