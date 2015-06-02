@@ -52,7 +52,7 @@ exports.execute = function (req, res) {
 
 // Get list of servers
 exports.index = function(req, res) {
-  Server.find()
+  Server.find({}, { 'activeScripts.results': 0 })
     .exec(function (err, servers) {
       if(err) { return handleError(res, err); }
       return res.json(200, servers);
@@ -68,10 +68,11 @@ exports.display = function (req, res) {
         if (server.activeScripts.length <= 0) {
           return false;
         }
-        server.activeScripts.sort(function (a, b) {
-          return b.timestamp - a.timestamp
-        });
-        server.activeScripts = server.activeScripts.slice(0, 10);
+        server.activeScripts = _.map(server.activeScripts,
+          function (interval) {
+            interval.results = _.last(interval.results, 10);
+            return interval;
+          })
         return server;
       });
       _.remove(displayServers, function (server) {
