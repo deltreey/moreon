@@ -2,8 +2,8 @@
 
 angular.module('moreOnApp')
   .controller('ServerstatsCtrl', function ($scope, $http, $interval) {
-    $scope.charts = [];
-    var colorList = [
+    $scope.servers = [];
+    $scope.colorList = [
       'FF785C',
       'FFB15C',
       '4390AE',
@@ -29,38 +29,47 @@ angular.module('moreOnApp')
     function GetServers() {
       $http.get('/api/v1/servers/charts')
         .success(function (servers) {
-          $scope.charts = [];
-          var colorIndex = 0;
-          for (var s = 0; s < servers.length; ++s) {
-            var server = servers[s];
-            // Only display active servers
-            for (var a = 0; a < server.activeScripts.length; ++a) {
-              var rows = [];
-              var displayScript = server.activeScripts[a];
-              var maxCount = 10;
+          var colorIndex = -1;
 
-              if (displayScript.results.length < maxCount) {
-                maxCount = displayScript.results.length;
-              }
-              for (var n = 0; n < maxCount; ++n) {
-                var value = displayScript.results[n].value;
-                var time = new Date(displayScript.results[n].timestamp);
+          $scope.servers = _.map(servers, function (server) {
+            var serverIndex = _.findWhere($scope.servers, { id: server._id.toString() });
+            var scopeServer = null;
+
+            if (serverIndex) {
+              scopeServer = $scope.servers[serverIndex];
+            }
+            else {
+              scopeServer = {
+                id: server._id.toString(),
+                name: server.description
+              };
+            }
+            
+            scopeServer.charts = _.map(server.activeScripts, function (interval) {
+              var rows = [];
+
+              _.each(interval.results, function (dataPoint) {
                 rows.push({
                   c: [{
                     // this assumes that time is more relevant than date, may change
-                    v: time.toLocaleTimeString()
+                    v: new Date(dataPoint.timestamp).toLocaleTimeString()
                   },{
-                    v: value
+                    v: dataPoint.value
                   }]
                 });
+              });
+
+              ++colorIndex;
+              if (colorIndex >= $scope.colorList.length) {
+                colorIndex = 0;
               }
 
-              $scope.charts.push({
+              return {
                 type: 'AreaChart',
                 options: {
-                  title: server.hostname + ': ' + displayScript.script.name,
+                  title: interval.script.name,
                   legend: 'none',
-                  colors: ['#' + colorList[colorIndex]]
+                  colors: ['#' + $scope.colorList[colorIndex]]
                 },
                 data: {
                   cols: [{
@@ -74,14 +83,11 @@ angular.module('moreOnApp')
                   }],
                   rows: rows
                 }
-              });
+              };
+            });
 
-              ++colorIndex;
-              if (colorIndex >= colorList.length) {
-                colorIndex = 0;
-              }
-            }
-          }
+            return scopeServer;
+          });
         });
     }
 

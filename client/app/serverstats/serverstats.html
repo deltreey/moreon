@@ -1,5 +1,16 @@
 <div class="row" >
-	<div class="col-md-3 col-lg-2 col-sm-6" ng-repeat="chart in charts" style="margin-bottom: 2%;">
-		<div google-chart chart="chart" style="{{cssStyle}}"></div>
+	<div class="col-sm-12 col-md-6" ng-repeat="server in servers">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<span ng-bind="server.name"></span>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4" ng-repeat="chart in server.charts">
+						<div google-chart chart="chart" style="{{cssStyle}}"></div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

@@ -8,6 +8,10 @@ angular.module('moreOnApp', [
   'ui.bootstrap',
   'googlechart'
 ])
+  .constant('_', window._)
+  .run(function ($rootScope) {
+     $rootScope._ = window._;
+  })
   .config(function ($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider
       .otherwise({
