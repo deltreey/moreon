@@ -1,4 +1,4 @@
-![travis ci](https://travis-ci.org/deltreey/moreon.svg)
+[![travis ci](https://travis-ci.org/deltreey/moreon.svg)][6]
 # MoreOn
 
 * MoreOn your data
@@ -79,3 +79,4 @@ Then just let the server sit there while you change files, updating automaticall
 [3]: https://github.com/DaftMonk/generator-angular-fullstack
 [4]: http://bouil.github.io/angular-google-chart/#/fat
 [5]: https://www.raspberrypi.org/
+[6]: https://travis-ci.org/deltreey/moreon
