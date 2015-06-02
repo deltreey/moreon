@@ -29,6 +29,8 @@ describe('GET /api/v1/servers', function() {
 });
 
 describe('Integration Tests', function() {
+  this.timeout(10000);
+  
   var token = null;
   var testServer = {
     hostname: 'test',
