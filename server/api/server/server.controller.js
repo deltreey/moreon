@@ -88,11 +88,9 @@ exports.display = function (req, res) {
       });
     },
     function (servers, callback) {
-      _.compact(_.map(servers,
-        function (server) {
-          return server.activeScripts.length > 0;
-        }
-      ));
+      _.remove(servers, function (server) {
+        return server.activeScripts.length <= 0;
+      });
       callback(null, servers);
     }],
     function (err, results) {
