@@ -56,29 +56,44 @@ exports.display = function (req, res) {
       });
     },
     function (servers, callback) {
-      async.each(servers, function (server, eachCallback) {
-        Interval.aggregate([
-          { $match: { _id: { $in: server.activeScripts } } },
-          { $unwind: '$results' }, 
-          { $sort: { 'results.timestamp': -1 } },
-          { $limit: 10 },
-          { $group: { _id:'$_id', answers: { $push: '$results' } } }
-        ], function (err, intervals) {
-          if (err) { return eachCallback(err); }
-          server.activeScripts = intervals;
-          eachCallback(null, servers);
+      async.map(servers, function (server, serverCallback) {
+        async.map(server.activeScripts, function (interval, intervalCallback) {
+          Interval.aggregate([
+            { $match: { _id: interval._id ? interval._id : interval } },
+            { $unwind: '$results' }, 
+            { $sort: { 'results.timestamp': -1 } },
+            { $limit: 10 },
+            { $sort: { 'results.timestamp': 1 } },
+            { $group: {
+                _id: '$_id',
+                results: { $push: '$results' },
+                script: { $first: '$script' }
+              }
+          }], function (error, found) {
+            if (error) { return intervalCallback(error); }
+            Script.findById(found[0].script, function (err, script) {
+              if (err) { return intervalCallback(err); }
+              found[0].script = script;
+              intervalCallback(null, found[0]);
+            });
+          });
+        }, function (err, scripts) {
+          if (err) { return serverCallback(err); }
+          server = server.toObject();
+          server.activeScripts = scripts;
+          serverCallback(err, server);
         });
-      },
-      function (err, results) {
+      }, function (err, results) {
         callback(err, results);
       });
     },
     function (servers, callback) {
-      var displayServers = _.compact(_.map(servers,
+      _.compact(_.map(servers,
         function (server) {
           return server.activeScripts.length > 0;
         }
       ));
+      callback(null, servers);
     }],
     function (err, results) {
       if (err) { return handleError(res, err); }
@@ -257,20 +272,14 @@ function RunScriptOnServer (server, interval) {
     function (err, results) {
       if (err) { return console.error(err); }
       if (new IsNumber(results)) {
-        var intervalIndex = _.findIndex(server.activeScripts, function (activeScript) {
+        var script = _.find(server.activeScripts, function (activeScript) {
           if (activeScript._id === undefined) {
-            return activeScript.toString() === interval._id.toString();
+            return activeScript.toString().trim() === interval._id.toString().trim();
           }
-          return activeScript._id.toString() === interval._id.toString();
+          return activeScript._id.toString().trim() === interval._id.toString().trim();
         });
-        var intervalObject = {};
-        intervalObject['activeScripts.' + intervalIndex + '.results'] = {
-          value: parseFloat(results),
-          timestamp: new Date()
-        };
-
-        Server.update({ _id: server._id }, {
-          $push: intervalObject
+        Interval.update({ _id: script._id ? script._id : script }, {
+          $push: { results: { value: parseFloat(results), timestamp: new Date() } }
         }, function (err) {
           if (err) { console.error(err); }
         });
