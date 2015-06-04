@@ -11,7 +11,8 @@ var server = request.agent("http://localhost:9000");
 
 var Server = require('./server.model'),
     Script = require('../script/script.model'),
-    User = require('../user/user.model');
+    User = require('../user/user.model'),
+    Interval = require('../interval/interval.model');
 
 describe('GET /api/v1/servers', function() {
 
@@ -40,6 +41,10 @@ describe('Integration Tests', function() {
     command: 'echo "test"',
     defaultInterval: 1000
   };
+  var testInterval = {
+    duration: 2000,
+    results: []
+  };
   var testUser = {
     provider: 'local',
     name: 'Test User',
@@ -64,10 +69,16 @@ describe('Integration Tests', function() {
         });
       },
       function (callback) {
-        testServer.activeScripts = [{
-          script: testScript._id,
-          duration: 100
-        }];
+        testInterval.script = testScript._id
+
+        Interval.create(testInterval, function (error, interval) {
+          if (error) { return callback(error); }
+          testInterval = interval.toObject();
+          callback();
+        });
+      },
+      function (callback) {
+        testServer.activeScripts = [testInterval._id];
 
         Server.create(testServer, function (err, server) {
           if (err) return callback(err);
@@ -89,19 +100,25 @@ describe('Integration Tests', function() {
     function (callback) {
       Server.remove({ _id: testServer._id },
         function (err) {
-          callback(err)
+          callback(err);
+        });
+    },
+    function (callback) {
+      Interval.remove({ _id: testInterval._id },
+        function (err) {
+          callback(err);
         });
     },
     function (callback) {
       Script.remove({ _id: testScript._id },
         function (err) {
-          callback(err)
+          callback(err);
         });
     },
     function (callback) {
       User.remove({ _id: testUser._id },
         function (err) {
-          callback(err)
+          callback(err);
         });
     }], function (error, results) {
       done(error);

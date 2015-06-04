@@ -6,91 +6,100 @@ var _ = require('lodash'),
     async = require('async');
 var Server = require('./server.model'),
     Script = require('../script/script.model'),
-    Interval = require('./interval.model');
+    Interval = require('../interval/interval.model');
 var config = require('../../config/environment');
 
 exports.runningScripts = [];
 
 // Start Intervals
 exports.start = function (req, res) {
-  Server.find({})
-    .populate('activeScripts.script')
-    .exec(function (err, servers) {
-    if(err) { return handleError(res, err); }
-    async.each(servers, function (server, serverCallback) {
-      async.each(server.activeScripts, function (interval, intervalCallback) {
-        new StartRunningScript(interval, server, intervalCallback);
-        }, function (error) {
-            serverCallback(error);
+  async.waterfall([
+    function (callback) {
+      Server.find(function (err, servers) {
+        callback(err, servers)
+      });
+    },
+    function (servers, callback) {
+      async.each(servers, function (server, eachCallback) {
+        Interval.find({ _id: { $in: server.activeScripts } }, { results: 0 })
+          .populate('script')
+          .exec(function (err, intervals) {
+            if (err) { return eachCallback(err); }
+            async.each(intervals, function (interval, intervalCallback) {
+              new StartRunningScript(interval, server, intervalCallback);
+            }, function (err, results) {
+              eachCallback(err, results);
+            });
         });
-    }, function (error) {
-      if (error) { return handleError(res, error); }
+      }, function (err, results) {
+        callback(err, results);
+      });
+    }], function (err) {
+      if (err) { return handleError(res, err); }
       res.send(200);
     });
-  });
-};
-
-exports.execute = function (req, res) {
-  Server.findById(req.params.serverId, function (err, server) {
-    if (err) { return handleError(res, err); }
-    if (!server) { return res.send(404); }
-    var intervalIndex = _.findIndex(server.activeScripts, function (activeScript) {
-      return activeScript._id.toString() === req.params.intervalId.toString();
-    });
-    var interval = server.activeScripts[intervalIndex];
-
-    Script.findById(interval.script, function (err, script) {
-      if (err) { return handleError(res, err); }
-      if (!script) { return handleError(res, 'The script for that interval could not be found.'); }
-      new RunScript(server.hostname, server.username, script.command, function (err, results) {
-        if (err) { return handleError(res, err); }
-        res.send(200, results);
-      });
-    });
-  });
 };
 
 // Get list of servers
 exports.index = function(req, res) {
-  Server.find({}, { 'activeScripts.results': 0 })
-    .exec(function (err, servers) {
-      if(err) { return handleError(res, err); }
-      return res.json(200, servers);
+  Server.find(function (err, servers) {
+    if(err) { return handleError(res, err); }
+    return res.json(200, servers);
   });
 };
 
 exports.display = function (req, res) {
-  Server.find()
-    .populate('activeScripts.script')
-    .exec(function (err, servers) {
-      if (err) { return handleError(res, err); }
-      var displayServers = _.map(servers, function (server) {
-        if (server.activeScripts.length <= 0) {
-          return false;
+  async.waterfall([
+    function (callback) {
+      Server.find(function (err, servers) {
+        callback(err, servers)
+      });
+    },
+    function (servers, callback) {
+      async.each(servers, function (server, eachCallback) {
+        Interval.aggregate([
+          { $match: { _id: { $in: server.activeScripts } } },
+          { $unwind: '$results' }, 
+          { $sort: { 'results.timestamp': -1 } },
+          { $limit: 10 },
+          { $group: { _id:'$_id', answers: { $push: '$results' } } }
+        ], function (err, intervals) {
+          if (err) { return eachCallback(err); }
+          server.activeScripts = intervals;
+          eachCallback(null, servers);
+        });
+      },
+      function (err, results) {
+        callback(err, results);
+      });
+    },
+    function (servers, callback) {
+      var displayServers = _.compact(_.map(servers,
+        function (server) {
+          return server.activeScripts.length > 0;
         }
-        server.activeScripts = _.map(server.activeScripts,
-          function (interval) {
-            interval.results = _.last(interval.results, 10);
-            return interval;
-          })
-        return server;
-      });
-      _.remove(displayServers, function (server) {
-        return server === false;
-      });
-      return res.json(200, displayServers);
+      ));
+    }],
+    function (err, results) {
+      if (err) { return handleError(res, err); }
+      return res.json(200, results);
     });
 };
 
 // Get a single server
 exports.show = function(req, res) {
-  Server.findById(req.params.id)
-    .populate('activeScripts.script')
-    .exec(function (err, server) {
-      if(err) { return handleError(res, err); }
-      if(!server) { return res.send(404); }
-      return res.json(server);
+  Server.findById(req.params.id, function (err, server) {
+    if(err) { return handleError(res, err); }
+    if(!server) { return res.send(404); }
+    Interval.find({ _id: { $in: server.activeScripts } }, { results: 0 })
+      .populate('script')
+      .exec(function (err, intervals) {
+        if(err) { return handleError(res, err); }
+        server = server.toObject()
+        server.activeScripts = intervals;
+        return res.json(server);
     });
+  });
 };
 
 // Creates a new server in the DB.
@@ -103,7 +112,6 @@ exports.create = function(req, res) {
 
 // Updates an existing server in the DB.
 exports.update = function(req, res) {
-  if(req.body._id) { delete req.body._id; }
   for (var s = 0; s < req.body.activeScripts.length; ++s) {
     if (typeof(req.body.activeScripts[s].script) === typeof({})) {
       req.body.activeScripts[s].script = req.body.activeScripts[s].script._id;
@@ -117,12 +125,43 @@ exports.update = function(req, res) {
         if(!server) { return callback('404'); }
         callback(null, server, req.body);
       });
-    }, function (oldServer, server, callback) {
-      // turn off the old scripts
-      async.each(oldServer.activeScripts, StopRunningScript, function (error) {
-        callback(error, oldServer, server);
+    },
+    function (oldServer, server, callback) {
+      // stop running scripts
+      Interval.find({ _id: { $in: oldServer.activeScripts } }, { results: 0 })
+        .populate('script')
+        .exec(function (err, intervals) {
+          if (err) { return callback(err); }
+          async.each(intervals, StopRunningScript, function (err, results) {
+            callback(err, oldServer, server);
+          });
       });
-    }, function (oldServer, server, callback) {
+    },
+    function (oldServer, server, callback) {
+      // create new intervals for those that are new, remap to IDs
+      async.map(server.activeScripts, function (script, mapCallback) {
+        if (script._id === undefined) {
+          Interval.create(script, function (err, interval) {
+            mapCallback(err, interval._id);
+          });
+        }
+        else {
+          // or update them if they exist
+          Interval.findById(script._id, function (err, original) {
+            if (err) { return mapCallback(err); }
+            delete script._id
+            var updated = _.merge(original, script);
+            updated.save(function (err) {
+              mapCallback(err, original._id);
+            });
+          });
+        }
+      }, function (err, results) {
+        server.activeScripts = results;
+        callback(err, oldServer, server);
+      });
+    },
+    function (oldServer, server, callback) {
       // update server with new info; remove old intervals
       var oldIds = _.difference(oldServer.activeScripts, server.activeScripts);
       Server.update({ _id: oldServer._id },
@@ -143,20 +182,16 @@ exports.update = function(req, res) {
           callback(err, oldServer);
       });
     }, function (oldServer, callback) {
-      Server.findById(oldServer._id)
-        .populate('activeScripts.script')
-        .exec(function (err, server) {
-          callback(err, server);
+      // pull server, with the new interval ids
+      Server.findById(oldServer._id, function (err, server) {
+        callback(err, server);
       });
     }, function (updated, callback) {
-      // start new scripts
-      async.each(updated.activeScripts, function (interval, scriptCallback) {
-        new StartRunningScript(interval, updated, function (error) {
-          if (error) { return scriptCallback(error); }
-          return scriptCallback();
-        });
-      }, function (error, result) {
-        return callback(error, result);
+      // run the new scripts
+      async.each(updated.activeScripts, function (interval, intervalCallback) {
+        new StartRunningScript(interval, updated, intervalCallback);
+      }, function (error) {
+        callback(error, updated);
       });
     }], function (error, result) {
       if (error === '404') {
@@ -223,6 +258,9 @@ function RunScriptOnServer (server, interval) {
       if (err) { return console.error(err); }
       if (new IsNumber(results)) {
         var intervalIndex = _.findIndex(server.activeScripts, function (activeScript) {
+          if (activeScript._id === undefined) {
+            return activeScript.toString() === interval._id.toString();
+          }
           return activeScript._id.toString() === interval._id.toString();
         });
         var intervalObject = {};
@@ -247,6 +285,18 @@ function RunScriptOnServer (server, interval) {
 function StartRunningScript (interval, server, callback) {
   async.waterfall([
     function (asyncCallback) {
+      if (interval._id === undefined) {
+        Interval.findById(interval, { results: 0 })
+          .populate('script')
+          .exec(function (err, intervalObj) {
+            asyncCallback(err, intervalObj)
+        });
+      }
+      else {
+        asyncCallback(null, interval);
+      }
+    },
+    function (interval, asyncCallback) {
       if (interval.script._id === undefined) {
         Script.findById(interval.script, function (err, script) {
           if (err) { return asyncCallback(err); }
