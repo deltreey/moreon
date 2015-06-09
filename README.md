@@ -1,4 +1,6 @@
 [![travis ci](https://travis-ci.org/deltreey/moreon.svg)][6]
+[![Code Climate](https://codeclimate.com/github/deltreey/moreon/badges/gpa.svg)][7]
+[![bitHound Score](https://www.bithound.io/github/deltreey/moreon/badges/score.svg)][8]
 # MoreOn
 
 * MoreOn your data
@@ -80,3 +82,5 @@ Then just let the server sit there while you change files, updating automaticall
 [4]: http://bouil.github.io/angular-google-chart/#/fat
 [5]: https://www.raspberrypi.org/
 [6]: https://travis-ci.org/deltreey/moreon
+[7]: https://codeclimate.com/github/deltreey/moreon
+[8]: https://www.bithound.io/github/deltreey/moreon
