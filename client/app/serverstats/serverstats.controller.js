@@ -32,13 +32,9 @@ angular.module('moreOnApp')
           var colorIndex = -1;
 
           $scope.servers = _.map(servers, function (server) {
-            var serverIndex = _.findWhere($scope.servers, { id: server._id.toString() });
-            var scopeServer = null;
+            var scopeServer = _.findWhere($scope.servers, { id: server._id.toString() });
 
-            if (serverIndex) {
-              scopeServer = $scope.servers[serverIndex];
-            }
-            else {
+            if (!scopeServer) {
               scopeServer = {
                 id: server._id.toString(),
                 name: server.description
