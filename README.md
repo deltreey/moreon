@@ -3,6 +3,8 @@
 [![bitHound Score](https://www.bithound.io/github/deltreey/moreon/badges/score.svg)][8]
 # MoreOn
 
+[![Join the chat at https://gitter.im/deltreey/moreon](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/deltreey/moreon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 * MoreOn your data
 * MoreOn your server load
 * MoreOn your disk space
