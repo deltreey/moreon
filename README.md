@@ -1,9 +1,9 @@
+# MoreOn
+
 [![travis ci](https://travis-ci.org/deltreey/moreon.svg)][6]
 [![Code Climate](https://codeclimate.com/github/deltreey/moreon/badges/gpa.svg)][7]
 [![bitHound Score](https://www.bithound.io/github/deltreey/moreon/badges/score.svg)][8]
-# MoreOn
-
-[![Join the chat at https://gitter.im/deltreey/moreon](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/deltreey/moreon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/deltreey/moreon](https://badges.gitter.im/Join%20Chat.svg)][9]
 
 * MoreOn your data
 * MoreOn your server load
@@ -86,3 +86,4 @@ Then just let the server sit there while you change files, updating automaticall
 [6]: https://travis-ci.org/deltreey/moreon
 [7]: https://codeclimate.com/github/deltreey/moreon
 [8]: https://www.bithound.io/github/deltreey/moreon
+[9]: https://gitter.im/deltreey/moreon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
