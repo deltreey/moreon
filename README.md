@@ -1,6 +1,7 @@
 # MoreOn
 
 [![travis ci](https://travis-ci.org/deltreey/moreon.svg)][6]
+[![Codacy Badge](https://www.codacy.com/project/badge/69f5ab2cee034b3fb8cb46101c464a17)][10]
 [![Code Climate](https://codeclimate.com/github/deltreey/moreon/badges/gpa.svg)][7]
 [![bitHound Score](https://www.bithound.io/github/deltreey/moreon/badges/score.svg)][8]
 [![Join the chat at https://gitter.im/deltreey/moreon](https://badges.gitter.im/Join%20Chat.svg)][9]
@@ -87,3 +88,4 @@ Then just let the server sit there while you change files, updating automaticall
 [7]: https://codeclimate.com/github/deltreey/moreon
 [8]: https://www.bithound.io/github/deltreey/moreon
 [9]: https://gitter.im/deltreey/moreon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+[10]: https://www.codacy.com/app/suicidolt/moreon
