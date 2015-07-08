@@ -90,7 +90,7 @@ describe('Integration Tests', function() {
       },
       function (callback) {
         // authenticate user
-        token = jwt.sign({ _id: testUser._id }, config.secrets.session, { expiresInMinutes: 1 });
+        token = jwt.sign({ _id: testUser._id }, config.secrets.session, { expiresInMinutes: 5 });
         callback();
       }], function (error, results) {
         done(error);
